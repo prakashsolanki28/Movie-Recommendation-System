@@ -2,6 +2,11 @@
 
 This is a movie recommendation system that takes a movie name as input and returns recommended movies.
 
+## Images
+![Image Description](./home_page1.png)
+![Image Description](./home_page2.png)
+
+
 ## Getting Started
 
 To use this movie recommender system, follow these steps:
