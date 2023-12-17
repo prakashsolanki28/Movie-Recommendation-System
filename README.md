@@ -3,8 +3,8 @@
 This is a movie recommendation system that takes a movie name as input and returns recommended movies.
 
 ## Images
-![Image Description](./home_page1.png)
-![Image Description](./home_page2.png)
+![Home Page](./home_page1.png)
+![Home Page2](./home_page2.png)
 
 
 ## Getting Started
