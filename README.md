@@ -17,31 +17,36 @@ jupyter notebook  # run command in terminal
 Run all cell one bye one in jupyter notebook, get `movies.pkl` and `similarity.pkl` file
 
 Run app file
-``` python []
+``` python3 []
 streamlit run app.py #
 ```
 
 ## Jupyter Notebook
 
 import csv files
-```
+
+``` python3 []
 movies = pd.read_csv("tmdb_5000_movies.csv")
 credits = pd.read_csv("tmdb_5000_credits.csv")
 ```
+
 merge the two dataframes using `title`
-```
+``` python3 []
 movies = movies.merge(credits,on="title")
 ```
+
 drop unnecessary columns
-```
+``` python3 []
 movies = movies.drop(columns=["homepage","title_x","title_y","status","production_countries"])
 ```
+
 remove all rows with null values
-```
+``` python3 []
 movies.dropna(inplace=True)
 ```
+
 check duplicates
-```
+``` python3 []
 movies.duplicated().sum()
 ```
 
