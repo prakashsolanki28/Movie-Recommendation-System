@@ -23,33 +23,153 @@ streamlit run app.py #
 
 ## Jupyter Notebook
 
-import csv files
+import Dataset files
+
+Use [TMDB 5000 Movie](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata) Dataset
+
 
 ``` python3 []
 movies = pd.read_csv("tmdb_5000_movies.csv")
 credits = pd.read_csv("tmdb_5000_credits.csv")
 ```
 
-merge the two dataframes using `title`
+#### merge the two dataframes using `title`
 ``` python3 []
 movies = movies.merge(credits,on="title")
 ```
 
-drop unnecessary columns
+#### drop unnecessary columns
 ``` python3 []
 movies = movies.drop(columns=["homepage","title_x","title_y","status","production_countries"])
 ```
 
-remove all rows with null values
+#### remove all rows with null values
 ``` python3 []
 movies.dropna(inplace=True)
 ```
 
-check duplicates
+#### check duplicates
 ``` python3 []
 movies.duplicated().sum()
 ```
 
+#### Helper function to get the director's name
+
+``` python3 []
+def getDirector(obj):
+    listdata = []
+    for data in ast.literal_eval(obj):
+        if data['job'] == 'Director':
+            listdata.append(data['name'])
+            break
+    return listdata
+```
+
+#### Helper function to get names from keywords, genres, cast, crew
+
+``` python3 []
+def HelperForProcessing(obj):
+    listData = []
+    for data in ast.literal_eval(obj):
+        listData.append(data['name'])
+    return listData
+```
+
+#### Get 5 cast members
+``` python3 []
+def get5Cast(obj):
+    listData = []
+    temp = 0
+    for data in ast.literal_eval(obj):
+        if temp > 5:
+            break
+        listData.append(data['name'])
+        temp+=1
+    return listData
+```
+
+``` python3 []
+# change movies all data
+movies['genres'] = movies['genres'].apply(HelperForProcessing)
+movies['keywords'] = movies['keywords'].apply(HelperForProcessing)
+movies['cast'] = movies['cast'].apply(get5Cast)
+
+movies['crew'] = movies['crew'].apply(getDirector)
+movies['overview'] = movies['overview'].apply(lambda x: x.split())
+```
+
+#### Remove spaces
+``` python3 []
+movies['genres'] = movies['genres'].apply(lambda x:[i.replace(" ","") for i in x])
+movies['keywords'] = movies['keywords'].apply(lambda x:[i.replace(" ","") for i in x])
+movies['cast'] = movies['cast'].apply(lambda x:[i.replace(" ","") for i in x])
+movies['crew'] = movies['crew'].apply(lambda x:[i.replace(" ","") for i in x])
+```
+
+#### merge all the columns
+``` python3 []
+movies['tags'] = movies['overview'] + movies['genres']+ movies['keywords'] + movies['cast'] + movies['crew']
+```
+
+#### take only the title, movie_id and tags column
+``` python3 []
+data_frame = movies[['movie_id','title','tags']]
+```
+
+#### convert the tags column to string
+``` python3 []
+data_frame['tags'] = data_frame['tags'].apply(lambda x:" ".join(x))
+```
+
+#### Data stemming function
+``` python3 []
+def stem(text):
+    data = []
+    for word in text.split():
+        data.append(ps.stem(word))
+    
+    return " ".join(data)
+```
+
+#### apply stemming to the tags column
+``` python3 []
+data_frame['tags'] = data_frame['tags'].apply(stem)
+```
+
+#### convert tags in lower case
+``` python3 []
+data_frame['tags'] = data_frame['tags'].apply(lambda x: x.lower())
+```
+
+#### Create vectors for the tags column
+``` python3 []
+vectors = cv.fit_transform(data_frame['tags']).toarray()
+similarity = cosine_similarity(vectors)
+```
+
+#### Helper function to get the recommended movies
+``` python3 []
+def recommended(movie):
+    movie_index = data_frame[data_frame['title'] == movie].index[0]
+    distance = similarity[movie_index]
+    movies_list = sorted(list(enumerate(distance)),reverse=True,key=lambda x: x[1])[1:6]
+    
+    for i in movies_list:
+        print(data_frame.iloc[i[0]].title)
+
+```
+#### Call function 
+``` python3 []
+
+recommended('Batman Begins')
+
+# output 
+The Dark Knight
+Batman
+Batman
+The Dark Knight Rises
+Rockaway
+```
 ## Usage
 
 To get movie recommendations, provide the name of a movie as input. The system will then generate a list of recommended movies based on the input.
