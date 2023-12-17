@@ -33,27 +33,27 @@ movies = pd.read_csv("tmdb_5000_movies.csv")
 credits = pd.read_csv("tmdb_5000_credits.csv")
 ```
 
-#### merge the two dataframes using `title`
+### Merge the two dataframes using `title`
 ``` python3 []
 movies = movies.merge(credits,on="title")
 ```
 
-#### drop unnecessary columns
+### Drop unnecessary columns
 ``` python3 []
 movies = movies.drop(columns=["homepage","title_x","title_y","status","production_countries"])
 ```
 
-#### remove all rows with null values
+### Remove all rows with null values
 ``` python3 []
 movies.dropna(inplace=True)
 ```
 
-#### check duplicates
+### Check duplicates
 ``` python3 []
 movies.duplicated().sum()
 ```
 
-#### Helper function to get the director's name
+### Helper function to get the director's name
 
 ``` python3 []
 def getDirector(obj):
@@ -65,7 +65,7 @@ def getDirector(obj):
     return listdata
 ```
 
-#### Helper function to get names from keywords, genres, cast, crew
+### Helper function to get names from keywords, genres, cast, crew
 
 ``` python3 []
 def HelperForProcessing(obj):
@@ -75,7 +75,7 @@ def HelperForProcessing(obj):
     return listData
 ```
 
-#### Get 5 cast members
+### Get 5 cast members
 ``` python3 []
 def get5Cast(obj):
     listData = []
@@ -88,8 +88,8 @@ def get5Cast(obj):
     return listData
 ```
 
+### Change movies all data
 ``` python3 []
-# change movies all data
 movies['genres'] = movies['genres'].apply(HelperForProcessing)
 movies['keywords'] = movies['keywords'].apply(HelperForProcessing)
 movies['cast'] = movies['cast'].apply(get5Cast)
@@ -98,7 +98,7 @@ movies['crew'] = movies['crew'].apply(getDirector)
 movies['overview'] = movies['overview'].apply(lambda x: x.split())
 ```
 
-#### Remove spaces
+### Remove spaces
 ``` python3 []
 movies['genres'] = movies['genres'].apply(lambda x:[i.replace(" ","") for i in x])
 movies['keywords'] = movies['keywords'].apply(lambda x:[i.replace(" ","") for i in x])
@@ -106,22 +106,22 @@ movies['cast'] = movies['cast'].apply(lambda x:[i.replace(" ","") for i in x])
 movies['crew'] = movies['crew'].apply(lambda x:[i.replace(" ","") for i in x])
 ```
 
-#### merge all the columns
+### Merge all the columns
 ``` python3 []
 movies['tags'] = movies['overview'] + movies['genres']+ movies['keywords'] + movies['cast'] + movies['crew']
 ```
 
-#### take only the title, movie_id and tags column
+### Take only the title, movie_id and tags column
 ``` python3 []
 data_frame = movies[['movie_id','title','tags']]
 ```
 
-#### convert the tags column to string
+### Convert the tags column to string
 ``` python3 []
 data_frame['tags'] = data_frame['tags'].apply(lambda x:" ".join(x))
 ```
 
-#### Data stemming function
+### Data stemming function
 ``` python3 []
 def stem(text):
     data = []
@@ -131,12 +131,12 @@ def stem(text):
     return " ".join(data)
 ```
 
-#### apply stemming to the tags column
+### Apply stemming to the tags column
 ``` python3 []
 data_frame['tags'] = data_frame['tags'].apply(stem)
 ```
 
-#### convert tags in lower case
+### Convert tags in lower case
 ``` python3 []
 data_frame['tags'] = data_frame['tags'].apply(lambda x: x.lower())
 ```
