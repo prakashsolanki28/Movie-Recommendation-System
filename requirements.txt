@@ -1,0 +1,7 @@
+streamlit
+pandas
+pickle
+nltk
+sklearn
+jupyterlab
+notebook
