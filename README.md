@@ -19,6 +19,7 @@ To use this movie recommender system, follow these steps:
 jupyter notebook  # run command in terminal 
 ```
 ![Image Description](./jupyter_notebook.png)
+
 Run all cell one bye one in jupyter notebook, get `movies.pkl` and `similarity.pkl` file
 
 Run app file
